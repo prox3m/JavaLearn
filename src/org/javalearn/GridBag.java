@@ -183,6 +183,7 @@ public class GridBag {
         c.weighty = 1;
         
         JTextField mathFormula = new JTextField();
+        mathFormula.setHorizontalAlignment(SwingConstants.RIGHT);
         c.gridx = 0;
         c.gridy = 0;
         c.gridheight = 1;
@@ -190,6 +191,9 @@ public class GridBag {
         frame.add(mathFormula, c);
         
         JTextField mathAnswer = new JTextField();
+        mathAnswer.setHorizontalAlignment(SwingConstants.RIGHT);
+        mathAnswer.setEditable(false);
+        
         c.gridy = 1;
         frame.add(mathAnswer, c);
     }
