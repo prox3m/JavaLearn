@@ -5,6 +5,38 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class GridBag {
+    /**
+     * НЕОБХОДИМЫЕ ДОРАБОТКИ
+     * 
+     * ActionAdd - добавление операторов
+     *             проверка на близость операторов (кроме скобок)
+     * 
+     * Results - обработка формулы из mathFormula
+     *           вывод результата в mathAnswer
+     *           проверка на верный синтаксис
+     * 
+     * SwitchSign - инвертирует знак числа
+     * 
+     * 
+     * СДЕЛАНО
+     * 
+     * DigitAdd - добавление чисел
+     * 
+     * DeleteChar - удаляет один символ (действие или цифру)
+     * 
+     * SetFrameSettings - настройки frame
+     * 
+     * ButtonsNumbers - добавление цифр/действий
+     *                  привязка кнопок к функциям
+     * 
+     * ButtonsControl - добавление скобок "()"
+     *                  очитска текста
+     *                  изменение знака +/-
+     * 
+     * TextDisplay - добавление двух строк
+     *               mathFormula - хранит в себе задачу
+     *               mathAnswer - хранит ответ задачи
+     */
     
     public static final JFrame frame = new JFrame("Калькулятор");
     public static final JTextField mathFormula = new JTextField();
@@ -19,6 +51,19 @@ public class GridBag {
     public static void DigitAdd(String digit){
         String formula = mathFormula.getText();
         mathFormula.setText(formula + digit);
+    }
+    
+    public static void DeleteChar(){
+        String formula = mathFormula.getText();
+        
+        if (!formula.isEmpty()){
+            formula = formula.substring(0, formula.length()-1);
+            mathFormula.setText(formula);
+        }
+    }
+    
+    public static void Results(){
+        String formula = mathFormula.getText();
     }
     
     public static void SetFrameSettings(){
@@ -181,13 +226,17 @@ public class GridBag {
             }
         });
         
-        button = new JButton(",");
+        button = new JButton(".");
         c.gridx = 2;
         c.gridwidth = 1;
         frame.add(button, c);
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
+                String formula = mathFormula.getText();
+                if (formula.length() == 0 || formula.charAt(formula.length() - 1) == '-' || formula.indexOf('.') >= 0){
+                    return;
+                }
                 DigitAdd(".");
             }
         });
@@ -211,11 +260,22 @@ public class GridBag {
     }
     
     public static void ButtonsControl(){
-        button = new JButton("CLEAR");
+        button = new JButton("←");
         c.fill = GridBagConstraints.BOTH;
+        c.gridheight = 1;
         c.gridx = 4;
         c.gridy = 2;
-        c.gridheight = 2;
+        frame.add(button, c);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                DeleteChar();
+            }
+        });
+        
+        button = new JButton("CLEAR");
+        c.gridx = 4;
+        c.gridy = 3;
         frame.add(button, c);
         button.addActionListener(new ActionListener() {
             @Override
