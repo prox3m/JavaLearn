@@ -1,5 +1,6 @@
 package org.javalearn;
 
+import java.util.Stack;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -8,21 +9,22 @@ public class GridBag {
     /**
      * НЕОБХОДИМЫЕ ДОРАБОТКИ
      * 
-     * ActionAdd - добавление операторов
-     *             проверка на близость операторов (кроме скобок)
-     * 
-     * Results - обработка формулы из mathFormula
-     *           вывод результата в mathAnswer
-     *           проверка на верный синтаксис
+     * Calculate - обработка формулы из mathFormula
+     *             проверка на верный синтаксис
      * 
      * SwitchSign - инвертирует знак числа
      * 
      * 
      * СДЕЛАНО
+     * IsOperationBefore - проверка на близость операторов (кроме скобок)
+     * 
+     * ActionAdd - добавление операторов
      * 
      * DigitAdd - добавление чисел
      * 
      * DeleteChar - удаляет один символ (действие или цифру)
+     * 
+     * Results - вывод результата в mathAnswer
      * 
      * SetFrameSettings - настройки frame
      * 
@@ -44,10 +46,28 @@ public class GridBag {
     public static JButton button;
     public static final GridBagConstraints c = new GridBagConstraints();
     
+    public static double Calculate(String formula){
+        Stack<Double> numbers = new Stack<>();
+        Stack<Character> operators = new Stack<>();
+        return 0.0;
+    }
+    
+    public static boolean IsOperationBefore(){
+        String formula = mathFormula.getText();
+        if (formula.isEmpty())
+            return false;
+        else {
+            String operation = "" + formula.charAt(formula.length()-1);
+            return !operation.equals("%") && !operation.equals("/") &&
+                   !operation.equals("*");
+        }
+    }
+    
     public static void ActionAdd(String action){
         String formula = mathFormula.getText();
         mathFormula.setText(formula + action);
     }
+    
     public static void DigitAdd(String digit){
         String formula = mathFormula.getText();
         mathFormula.setText(formula + digit);
@@ -64,6 +84,9 @@ public class GridBag {
     
     public static void Results(){
         String formula = mathFormula.getText();
+        
+        double result = Calculate(formula);
+        mathAnswer.setText(String.valueOf(result));
     }
     
     public static void SetFrameSettings(){
@@ -86,7 +109,9 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd("%");
+                if (IsOperationBefore()){
+                    ActionAdd("%");
+                }
             }
         });
         
@@ -97,7 +122,9 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd("/");
+                if (IsOperationBefore()){
+                    ActionAdd("/");
+                }
             }
         });
         
@@ -107,7 +134,9 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd("*");
+                if (IsOperationBefore()){
+                    ActionAdd("*");
+                }
             }
         });
         
