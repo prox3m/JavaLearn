@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class GridBag {
+public class CalculatorApp {
     /**
      * НЕОБХОДИМЫЕ ДОРАБОТКИ
      * 
@@ -14,13 +14,14 @@ public class GridBag {
      * 
      * SwitchSign - инвертирует знак числа
      * 
+     * actionAdd - добавление операторов учитывая отрицательные числа
+     * 
      * 
      * СДЕЛАНО
-     * IsOperationBefore - проверка на близость операторов (кроме скобок)
      * 
-     * ActionAdd - добавление операторов
+     * isOperationBefore - проверка на близость операторов (кроме скобок)
      * 
-     * DigitAdd - добавление чисел
+     * digitAdd - добавление чисел
      * 
      * DeleteChar - удаляет один символ (действие или цифру)
      * 
@@ -40,40 +41,48 @@ public class GridBag {
      *               mathAnswer - хранит ответ задачи
      */
     
-    public static final JFrame frame = new JFrame("Калькулятор");
-    public static final JTextField mathFormula = new JTextField();
-    public static final JTextField mathAnswer = new JTextField();
-    public static JButton button;
-    public static final GridBagConstraints c = new GridBagConstraints();
+    private final JFrame frame;
+    private final JTextField mathFormula;
+    private final JTextField mathAnswer;
+    private final GridBagConstraints c;
+    private JButton button;
     
-    public static double Calculate(String formula){
+    public CalculatorApp() {
+        frame = new JFrame("Калькулятор");
+        mathFormula = new JTextField();
+        mathAnswer = new JTextField();
+        c = new GridBagConstraints();
+    }
+    
+    private double calculate(String formula){
         Stack<Double> numbers = new Stack<>();
         Stack<Character> operators = new Stack<>();
         return 0.0;
     }
     
-    public static boolean IsOperationBefore(){
+    private boolean isOperationBefore(){
         String formula = mathFormula.getText();
         if (formula.isEmpty())
             return false;
         else {
             String operation = "" + formula.charAt(formula.length()-1);
             return !operation.equals("%") && !operation.equals("/") &&
-                   !operation.equals("*");
+                   !operation.equals("*") && !operation.equals("+") &&
+                   !operation.equals("-");
         }
     }
     
-    public static void ActionAdd(String action){
+    private void actionAdd(String action){
         String formula = mathFormula.getText();
         mathFormula.setText(formula + action);
     }
     
-    public static void DigitAdd(String digit){
+    private void digitAdd(String digit){
         String formula = mathFormula.getText();
         mathFormula.setText(formula + digit);
     }
     
-    public static void DeleteChar(){
+    private void deleteChar(){
         String formula = mathFormula.getText();
         
         if (!formula.isEmpty()){
@@ -82,21 +91,21 @@ public class GridBag {
         }
     }
     
-    public static void Results(){
+    private void results(){
         String formula = mathFormula.getText();
         
-        double result = Calculate(formula);
+        double result = calculate(formula);
         mathAnswer.setText(String.valueOf(result));
     }
     
-    public static void SetFrameSettings(){
+    private void setFrameSettings(){
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new GridBagLayout());
         frame.setSize(300, 500);
         frame.setLocationRelativeTo(null);
     }
     
-    public static void ButtonsNumbers(){
+    private void buttonsNumbers(){
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
@@ -109,8 +118,8 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (IsOperationBefore()){
-                    ActionAdd("%");
+                if (isOperationBefore()){
+                    actionAdd("%");
                 }
             }
         });
@@ -122,8 +131,8 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (IsOperationBefore()){
-                    ActionAdd("/");
+                if (isOperationBefore()){
+                    actionAdd("/");
                 }
             }
         });
@@ -134,8 +143,8 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (IsOperationBefore()){
-                    ActionAdd("*");
+                if (isOperationBefore()){
+                    actionAdd("*");
                 }
             }
         });
@@ -146,7 +155,9 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd("-");
+                if (isOperationBefore()){
+                    actionAdd("-");
+                }
             }
         });
         
@@ -157,7 +168,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("7");
+                digitAdd("7");
             }
         });
         
@@ -167,7 +178,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("8");
+                digitAdd("8");
             }
         });
         
@@ -177,7 +188,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("9");
+                digitAdd("9");
             }
         });
         
@@ -188,7 +199,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("4");
+                digitAdd("4");
             }
         });
         
@@ -198,7 +209,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("5");
+                digitAdd("5");
             }
         });
         
@@ -208,7 +219,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("6");
+                digitAdd("6");
             }
         });
         
@@ -219,7 +230,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("1");
+                digitAdd("1");
             }
         });
         
@@ -229,7 +240,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("2");
+                digitAdd("2");
             }
         });
         
@@ -239,7 +250,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("3");
+                digitAdd("3");
             }
         });
         
@@ -251,7 +262,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DigitAdd("0");
+                digitAdd("0");
             }
         });
         
@@ -266,7 +277,7 @@ public class GridBag {
                 if (formula.length() == 0 || formula.charAt(formula.length() - 1) == '-' || formula.indexOf('.') >= 0){
                     return;
                 }
-                DigitAdd(".");
+                digitAdd(".");
             }
         });
         
@@ -278,17 +289,25 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd("+");
+                if (isOperationBefore()){
+                    actionAdd("+");
+                }
             }
         });
         
         button = new JButton("=");
         c.gridy = 5;
         frame.add(button, c);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                results();
+            }
+        });
 
     }
     
-    public static void ButtonsControl(){
+    private void buttonsControl() {
         button = new JButton("←");
         c.fill = GridBagConstraints.BOTH;
         c.gridheight = 1;
@@ -298,7 +317,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                DeleteChar();
+                deleteChar();
             }
         });
         
@@ -323,7 +342,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd("(");
+                actionAdd("(");
             }
         });
         
@@ -333,7 +352,7 @@ public class GridBag {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                ActionAdd(")");
+                actionAdd(")");
             }
         });
         
@@ -342,7 +361,7 @@ public class GridBag {
         frame.add(button, c);
     }
     
-    public static void TextDisplay(){
+    private void textDisplay(){
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
@@ -360,12 +379,12 @@ public class GridBag {
         frame.add(mathAnswer, c);
     }
     
-    public static void CALC(){
-        SetFrameSettings();
+    public void calc(){
+        setFrameSettings();
         
-        TextDisplay();
-        ButtonsNumbers();
-        ButtonsControl();
+        textDisplay();
+        buttonsNumbers();
+        buttonsControl();
            
         frame.setVisible(true);
     }
