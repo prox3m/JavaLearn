@@ -41,6 +41,20 @@ public class CalculatorApp {
      *               mathAnswer - хранит ответ задачи
      */
     
+    /**
+     * МЕТОД РЕШЕНИЯ
+     * 
+     * private String resh(){
+     *     
+     * }
+     * 
+     * 2 * (2 + 2) - 1
+     * 
+     * [2 * resh() - 1]
+     * 
+     * [2 * [2 + 2] - 1]
+     */
+    
     private final JFrame frame;
     private final JTextField mathFormula;
     private final JTextField mathAnswer;
