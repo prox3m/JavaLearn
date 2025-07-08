@@ -74,18 +74,6 @@ public class CalculatorApp {
         return 0.0;
     }
     
-    private boolean isOperationBefore(){
-        String formula = mathFormula.getText();
-        if (formula.isEmpty())
-            return false;
-        else {
-            String operation = "" + formula.charAt(formula.length()-1);
-            return !operation.equals("%") && !operation.equals("/") &&
-                   !operation.equals("*") && !operation.equals("+") &&
-                   !operation.equals("-");
-        }
-    }
-    
     private void actionAdd(String action){
         String formula = mathFormula.getText();
         mathFormula.setText(formula + action);
@@ -132,9 +120,7 @@ public class CalculatorApp {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (isOperationBefore()){
-                    actionAdd("%");
-                }
+                actionAdd("%");
             }
         });
         
@@ -145,9 +131,7 @@ public class CalculatorApp {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (isOperationBefore()){
-                    actionAdd("/");
-                }
+                actionAdd("/");
             }
         });
         
@@ -157,9 +141,7 @@ public class CalculatorApp {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (isOperationBefore()){
-                    actionAdd("*");
-                }
+                actionAdd("*");
             }
         });
         
@@ -169,9 +151,7 @@ public class CalculatorApp {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (isOperationBefore()){
-                    actionAdd("-");
-                }
+                actionAdd("-");
             }
         });
         
@@ -287,10 +267,6 @@ public class CalculatorApp {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                String formula = mathFormula.getText();
-                if (formula.length() == 0 || formula.charAt(formula.length() - 1) == '-' || formula.indexOf('.') >= 0){
-                    return;
-                }
                 digitAdd(".");
             }
         });
@@ -303,9 +279,7 @@ public class CalculatorApp {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                if (isOperationBefore()){
-                    actionAdd("+");
-                }
+                actionAdd("+");
             }
         });
         
