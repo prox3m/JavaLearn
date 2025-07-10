@@ -5,15 +5,18 @@ import java.util.List;
 
 public class Lexer {
     
-    private static final int ERROR = -1;
-    private static final int UNDEFINED = 0;
-    private static final int VARIABLE = 1;
-    private static final int OPERATOR = 2;
-    private static final int INTEGER = 3;
-    private static final int NUMBER = 4;
-    private static final int LPARENTHESIS = 5;
-    private static final int RPARENTHESIS = 6;
-    private static final int WS = 7;
+    public static final int ERROR = -1;
+    public static final int UNDEFINED = 0;
+    public static final int VARIABLE = 1;
+    public static final int OPERATOR = 2;
+    public static final int INTEGER = 3;
+    public static final int NUMBER = 4;
+    public static final int LPARENTHESIS = 5;
+    public static final int RPARENTHESIS = 6;
+    public static final int WS = 7;
+    
+    private static final char LEFTPARENTHESIS = '(';
+    private static final char RIGHTPARENTHESIS = ')';
     
     private static final List<String> OPERATORS = Arrays.asList(
             "-", "+", "/", "*", "%",
@@ -39,16 +42,23 @@ public class Lexer {
     @Override
     public String toString() {
         switch (valType) {
+            case ERROR:
+                return "Err " + strVal + " " + errVal;
+            case VARIABLE:
+                return "Var " + strVal;
+            case OPERATOR:
+                return "Opr " + strVal;
             case INTEGER:
                 return "Int " + strVal;
             case NUMBER:
                 return "Num " + strVal;
-            case OPERATOR:
-                return "Opr " + strVal;
-            case VARIABLE:
-                return "Var " + strVal;
-            case ERROR:
-                return "Err " + strVal + " " + errVal;
+            case LPARENTHESIS:
+                return "LPa " + strVal;
+            case RPARENTHESIS:
+                return "RPa " + strVal;
+            case WS:
+                return "WS '" + strVal + "'";
+            
             default:
                 throw new IllegalStateException();
         }
@@ -57,6 +67,18 @@ public class Lexer {
     private boolean isOperation(char c) {
         return c == '%' || c == '/' || c == '*' ||
                 c == '-' || c == '+' || c == '=';
+    }
+
+    public int getValType() {
+        return valType;
+    }
+
+    public String getStrVal() {
+        return strVal;
+    }
+
+    public static int getIndex() {
+        return index;
     }
     
     public boolean nextToken() {
@@ -78,89 +100,177 @@ public class Lexer {
             }
             
             final char c = expression.charAt(index);
-            // = - + < > / * % 
-            // (
-            // )
-            // a b c d e f
-            // 1 2 3 4 5 6 7 8 9 0 .
-            // WS
-            // error
+            
             if (curType == UNDEFINED) {
                 if (Character.isDigit(c)) {
                     curType = INTEGER;
                     strVal += c;
                 } else if (Character.isWhitespace(c)) {
-                    //skip
+                    curType = WS;
+                    strVal += c;
                 } else if (isOperation(c)) {
                     curType = OPERATOR;
                     strVal += c;
                 } else if (Character.isAlphabetic(c)) {
                     curType = VARIABLE;
                     strVal += c;
+                } else if (c == LEFTPARENTHESIS) {
+                    curType = LPARENTHESIS;
+                    strVal += c;
+                } else if (c == RIGHTPARENTHESIS) {
+                    curType = RPARENTHESIS;
+                    strVal += c;
                 } else {
                     curType = ERROR;
+                    strVal += c;
                     errVal = "It is forbiden to use extra symbols in formula.";
-                    
-                    break;
                 }
             } else if (curType == INTEGER) {
                 if (Character.isDigit(c)) {
                     strVal += c;
                 } else if (Character.isWhitespace(c)) {
-                    //skip
+                    break;
                 } else if (isOperation(c)) {
                     break;
-                } else if (Character.isAlphabetic(c)) {
-                    break;
+                } else if (Character.isAlphabetic(c) || c == LEFTPARENTHESIS) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use hiden multyplication";
                 } else if (c == '.') {
                     strVal += c;
                     curType = NUMBER;
+                } else if (c == RIGHTPARENTHESIS) {
+                    break;
+                } else {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use extra symbols in numbers";
                 }
             } else if (curType == NUMBER) {
                 if (Character.isDigit(c)) {
                     strVal += c;
                 } else if (Character.isWhitespace(c)) {
-                    //skip
+                    break;
                 } else if (isOperation(c)) {
                     break;
-                } else if (Character.isAlphabetic(c)) {
-                    break;
+                } else if (Character.isAlphabetic(c) || c == LEFTPARENTHESIS) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use hiden multyplication";
                 } else if (c == '.') {
                     curType = ERROR;
+                    strVal += c;
                     errVal = "It is forbidden to use second delimeter in number.";
+                } else if (c == RIGHTPARENTHESIS) {
+                    break;
+                } else {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use extra symbols in numbers";
                 }
             } else if (curType == VARIABLE) {
                 if (Character.isDigit(c)) {
                     curType = VARIABLE;
                     strVal += c;
                 } else if (Character.isWhitespace(c)) {
-                    //skip
+                    break;
                 } else if (isOperation(c)) {
                     break;
                 } else if (Character.isAlphabetic(c)) {
                     strVal += c;
+                } else if (c == LEFTPARENTHESIS) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use hiden multyplication";
+                } else if (c == RIGHTPARENTHESIS) {
+                    break;
+                } else {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use extra symbols and delimeter after variables";
                 }
             } else if (curType == OPERATOR) {
                 if (Character.isDigit(c) && strVal == "-") {
                     curType = NUMBER;
                 } else if (Character.isDigit(c)) {
-                    
                     break;
                 } else if (Character.isWhitespace(c)) {
-                    //skip
+                    break;
                 } else if (Character.isAlphabetic(c)) {
-                    
                     break;
                 } else if (isOperation(c)) {
                     final String op = strVal + c;
                     if (OPERATORS.contains(op)) {
                         strVal = op;
                     } else {
-                        
                         break;
                     }
+                } else if (c == LEFTPARENTHESIS) {
+                    break;
+                } else if (c == RIGHTPARENTHESIS) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use closing parenthesis after operator";
+                } else {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use extra symbols and delimeter after operator";
                 }
-                
+            } else if (curType == LPARENTHESIS){
+                if (Character.isDigit(c)) {
+                    break;
+                } else if (Character.isWhitespace(c)) {
+                    break;
+                } else if (Character.isAlphabetic(c)) {
+                    break;
+                } else if (isOperation(c)) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use operators straight after open parenthesis";
+                } else if (c == RIGHTPARENTHESIS) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use empty parentheses.";
+                } else if (c == LEFTPARENTHESIS) {
+                    break;
+                } else {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use extra symbols and delimeter after open parenthesis";
+                }
+            } else if (curType == RPARENTHESIS) {
+                if (Character.isDigit(c) || Character.isAlphabetic(c) || c == LEFTPARENTHESIS) {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use hiden multyplication";
+                } else if (Character.isWhitespace(c)) {
+                    break;
+                } else if (isOperation(c)) {
+                    break;
+                } else if (c == RIGHTPARENTHESIS) {
+                    break;
+                } else {
+                    curType = ERROR;
+                    errVal = "It is forbiden to use extra symbols and delimeter after close parenthesis";
+                }
+            } else if (curType == WS) {
+                if (Character.isDigit(c)) {
+                    break;
+                } else if (Character.isWhitespace(c)) {
+                    strVal += c;
+                } else if (Character.isAlphabetic(c)) {
+                    break;
+                } else if (isOperation(c)) {
+                    break;
+                } else if (c == LEFTPARENTHESIS) {
+                    break;
+                } else if (c == RIGHTPARENTHESIS) {
+                    break;
+                } else {
+                    curType = ERROR;
+                    strVal += c;
+                    errVal = "It is forbiden to use extra symbols and delimeter on empty space";
+                }
             }
             valType = curType;
             index++;
